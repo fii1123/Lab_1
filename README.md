@@ -14,9 +14,9 @@
 Для сборки программ вам потребуется пакет GNU GCC и Cmake.
 В принципе, все что нужно, это:
     1. Скачать средства сборки
-       sudo apr-get install gcc cmake
+       `sudo apr-get install gcc cmake`
     2. Перейти в директорию с исходниками и запустить скрипт Bilding.sh
-       bash Bilding.sh
+       `bash Bilding.sh`
 
 В этой же директории и будут созданы исполняемые файлы.
 
