@@ -56,39 +56,45 @@
 
 Чтобы выяснить, какой чариант оптимален, оба потока проверялись импровизируемыми таймерами:
 
-`int start = clock();`
-`// some code`
-`printf("Timer n: %i", (int)clock() - start);`
+```
+int start = clock();
+// some code
+printf("Timer n: %i", (int)clock() - start);
+```
 
 Данные, посылаемые утилитой стандартной утилитой netcat:
-`asd`
-`asd`
-`qwe`
-`qwe`
-`zxc`
-`zxc`
+```
+asd
+asd
+qwe
+qwe
+zxc
+zxc
+```
 
 Результаты 1 варианта (LisIf v1.0-2a):
 
-`Timer 1: 3`
-`Timer 1: 1`
-`Timer 1: 2`
-`Timer 1: 2`
-`Timer 1: 3`
-`Timer 1: 2`
-`Timer 2: 666`
+```
+Timer 1: 3
+Timer 1: 1
+Timer 1: 2
+Timer 1: 2
+Timer 1: 3
+Timer 1: 2
+Timer 2: 666
+```
 
 Результаты 2 варианта (LisIf v1.0-2b)
-
-`Timer 1: 4`
-`Timer 1: 1`
-`Timer 1: 2`
-`Timer 1: 1`
-`Timer 1: 2`
-`Timer 1: 1`
-`Timer 2: 946`
-
-
+```
+Timer 1: 4
+Timer 1: 1
+Timer 1: 2
+Timer 1: 1
+Timer 1: 2
+Timer 1: 1
+Timer 2: 946
+```
+Вывод: первый вариант выигрывает распараллеливанием задачи на 1/3 в сравнении со вторым
 
 ## Авторство и лицензия
 
