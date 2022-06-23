@@ -1,6 +1,0 @@
-Package: LisIf
-Version: 1.0-2a
-Section: unils
-Architecture: any
-Maintainer: Filatov Ivan <f2000_99@mail.ru>
-Description: Set of utilities for analyzing network interfase
