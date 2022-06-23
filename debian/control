@@ -1,0 +1,11 @@
+Source: fia-deb
+Section: unknown
+Priority: optional
+Maintainer: Filatov Ivan <f2000_99@mail.ru>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.5.1
+
+Package: fia-deb
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Set of utilities for analyzing network interfase
