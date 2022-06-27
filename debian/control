@@ -1,11 +1,11 @@
-Source: fia-deb
+Source: lab-work-1
 Section: unknown
 Priority: optional
 Maintainer: Filatov Ivan <f2000_99@mail.ru>
-Build-Depends: debhelper-compat (= 13)
+Build-Depends: debhelper:all (>= 9.0.0)
 Standards-Version: 4.5.1
 
-Package: fia-deb
+Package: lab-work-1
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Set of utilities for analyzing network interfase

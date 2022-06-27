@@ -1,5 +1,5 @@
-fia-deb (1.0.2-1) unstable; urgency=medium
+lab-work-1 (1.0.3-1) unstable; urgency=medium
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial release
 
- -- Filatov Ivan <f2000_99@mail.ru>  Thu, 23 Jun 2022 10:37:37 +0300
+ -- Filatov Ivan <f2000_99@mail.ru>  Sun, 26 Jun 2022 11:20:23 +0300

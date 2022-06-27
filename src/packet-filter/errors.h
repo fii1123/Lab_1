@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+// в данном файле содержатся функции с обработкой ошибок
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -19,10 +20,15 @@
 #include <linux/if_ether.h>     // Протоколы L2
 #endif
 
+#include <pthread.h>
+#include <mqueue.h>
+
 int create_raw_socket();
 
 void set_index_from_ireq(int s, struct ifreq *if_req);
 
 void bind_socket(const int s, struct ifreq *if_req);
+
+mqd_t msg_queue_open(struct mq_attr *attr);
 
 #endif // ERRORS_H

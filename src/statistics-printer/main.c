@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <mqueue.h>
-#include <string.h>
 
+// размер сообщения = размер (unsigned int) * 5
 #define MSG_SIZE 20
 
 struct packet_stat {
@@ -33,21 +34,23 @@ void deshif(const unsigned int *buff, struct packet_stat *ps)
     inet_ntop(AF_INET, &buff[1], ps->ip_to, 16);
 
     // port
+    // для извлечения порта, выделяется фрагмент
+    // памяти с 16 битами или 0xFFFF
+
     ps->port_f = (buff[2] & 0xFFFF0000) >> 16;
     ps->port_t = buff[2] & 0xFFFF;
 
     // протокол, размер (полный и udp)
+    // код протокола состоит из 1 байта = 8 бит = 0xFF
     ps->protocol = (buff[3] & 0xFF0000) >> 16;
-    ps->total_len = buff[3] & 0xFFFF;
-    ps->udp_len = buff[4];
+    ps->udp_len = buff[3] & 0xFFFF;
+    ps->total_len = buff[4];
 }
 
 int main()
 {
     struct mq_attr attr = {
-        .mq_flags = 0,
-        .mq_curmsgs = 0,
-        .mq_maxmsg = 3000,
+        .mq_maxmsg = 10,
         .mq_msgsize = MSG_SIZE
     };
     mqd_t mq_id = mq_open("/packet-filter", O_RDONLY,
@@ -57,7 +60,7 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    char buff[20] = {0};
+    char buff[MSG_SIZE] = {0};
 
     // принимаем
     mq_receive(mq_id, buff, MSG_SIZE, NULL);
