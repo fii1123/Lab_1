@@ -18,7 +18,7 @@ install: all
 	sudo install -m 0755 packet-filter-a packet-filter-b statistics-printer /usr/bin/
 	
 uninstall:
-	sudo rm -rf $(addprefix /usr/bin/, packet-filter statistics-printer)
+	sudo rm -rf $(addprefix /usr/bin/, packet-filter-a packet-filter-b statistics-printer)
 
 deb:
 	dpkg-buildpackage -D
