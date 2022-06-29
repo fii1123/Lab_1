@@ -6,7 +6,7 @@
 #include <netinet/udp.h>
 #include <netinet/in.h>
 
-#include "errors.h"
+#include "safe_functions.h"
 
 // обычно, максимальный размер ip пакета до 576
 #define BUFF_SIZE 576
@@ -44,7 +44,7 @@ int filtration(struct filter *fl, struct iphdr *ip, struct udphdr *udp){
 
     unsigned int ip_verif;
     if (fl->ip_from != NULL &&
-            (inet_pton(AF_INET, fl->ip_from, &ip_verif) > 0 &&
+            (inet_pton(AF_INET, fl->ip_from, &ip_verif) &&
             ip_verif != ip->saddr)){
         return 0;
     }
@@ -53,7 +53,7 @@ int filtration(struct filter *fl, struct iphdr *ip, struct udphdr *udp){
         return 0;
     }
     if (fl->ip_to != NULL &&
-            (inet_pton(AF_INET, fl->ip_to, &ip_verif) > 0 &&
+            (inet_pton(AF_INET, fl->ip_to, &ip_verif) &&
             ip_verif != ip->daddr)){
         return 0;
     }
@@ -156,19 +156,45 @@ int main (int argc, char **argv)
     struct filter fl = {0};
 
     //создание фильтра
-    int arg;
+    int arg, ip_verif;
     for (arg = 1; arg <  argc - 1; arg++) {
         if (!strcmp(argv[arg], "-sa")) {
-            fl.ip_from = argv[arg + 1];
+            if (inet_pton(AF_INET, argv[arg + 1], &ip_verif) > 0) {
+                fl.ip_from = argv[arg + 1];
+            }
+            else {
+                perror("source address error!");
+                exit(EXIT_FAILURE);
+            }
         }
         if (!strcmp(argv[arg], "-sp")) {
-            fl.port_f = argv[arg + 1];
+            if (atoi(argv[arg + 1]) < 0 ||
+                    atoi(argv[arg + 1]) > UINT16_MAX) {
+                printf("source port error!");
+                exit(EXIT_FAILURE);
+            }
+            else {
+                fl.port_f = argv[arg + 1];
+            }
         }
         if (!strcmp(argv[arg], "-da")) {
-            fl.ip_to = argv[arg + 1];
+            if (inet_pton(AF_INET, argv[arg + 1], &ip_verif) > 0) {
+                fl.ip_from = argv[arg + 1];
+            }
+            else {
+                perror("distination address error!");
+                exit(EXIT_FAILURE);
+            }
         }
         if (!strcmp(argv[arg], "-dp")) {
-            fl.port_t = argv[arg + 1];
+            if (atoi(argv[arg + 1]) < 0 ||
+                    atoi(argv[arg + 1]) > UINT16_MAX) {
+                printf("distination port error!");
+                exit(EXIT_FAILURE);
+            }
+            else {
+                fl.port_f = argv[arg + 1];
+            }
         }
     }
 
@@ -217,6 +243,9 @@ int main (int argc, char **argv)
 
     mq_close(mq_id);
     mq_unlink("/packet-filter");
+    pthread_cancel(list_thread_id);
+    pthread_cancel(secd_thread_id);
+    close(raw_socket);
     exit(EXIT_SUCCESS);
 }
 
