@@ -27,7 +27,7 @@ struct filter {
 
 // информация о пакетах в бинарном виде
 struct statistics {
-    unsigned int bits_count;
+    unsigned int bytes_count;
     unsigned short packets_count;
 };
 
@@ -68,7 +68,7 @@ int filtration(struct filter *fl, struct iphdr *ip, struct udphdr *udp){
 }
 
 void create_statistics(struct statistics *stat, struct iphdr *ip){
-    stat->bits_count += ntohs(ip->tot_len) + FRAME_HSIZE;
+    stat->bytes_count += ntohs(ip->tot_len) + FRAME_HSIZE;
     stat->packets_count++;
 }
 
@@ -77,17 +77,17 @@ void *listening_thread(void *argum)
     struct argum *a = argum;
 
     unsigned int buff_len = sizeof(a->buff);
-    unsigned short packet_bits;
+    unsigned short packet_bytes;
 
     puts("Listening...\nPress \'q\' for exit");
     while (1) {
         // verif отвечает как за соответствие пакета,
         // так и за разрешение читать далее
         if (a->verif == 0) {
-            packet_bits = recv(a->sock, a->buff, buff_len, 0);
+            packet_bytes = recv(a->sock, a->buff, buff_len, 0);
 
             // пакет udp + фильтр
-            a->verif = (packet_bits > 0 && (a->ip->protocol == 17)
+            a->verif = (packet_bytes > 0 && (a->ip->protocol == 17)
                     && (filtration(a->fl, a->ip, a->udp) == 1));
         }
     }
@@ -117,7 +117,7 @@ void *secondary_tread(void *argum)
             sprintf(mq_buff, "%i", a->stat.packets_count);
             mq_send(a->mq_id, mq_buff, MSG_SIZE, 1);
 
-            sprintf(mq_buff, "%i", a->stat.bits_count);
+            sprintf(mq_buff, "%i", a->stat.bytes_count);
             mq_send(a->mq_id, mq_buff, MSG_SIZE, 1);
 
             // снова ожидание

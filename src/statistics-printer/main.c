@@ -5,47 +5,8 @@
 #include <arpa/inet.h>
 #include <mqueue.h>
 
-// размер сообщения = размер (unsigned int) * 5
-#define MSG_SIZE 20
-
-struct packet_stat {
-    char ip_from[16];
-    char ip_to[16];
-    char protocol;
-    unsigned short port_f;
-    unsigned short port_t;
-    unsigned short total_len;
-    unsigned short udp_len;
-};
-
-void print_stat(struct packet_stat *ps)
-{
-    printf("From [%s:%i]\tto [%s:%i]\n", ps->ip_from, ps->port_f, ps->ip_to,
-           ps->port_t);
-    printf("protocol: %i\tlen: %ib\tudp len: %ib\n\n",
-           ps->protocol, ps->total_len, ps->udp_len);
-}
-
-// дешифорвка
-void deshif(const unsigned int *buff, struct packet_stat *ps)
-{
-    // ip
-    inet_ntop(AF_INET, &buff[0], ps->ip_from, 16);
-    inet_ntop(AF_INET, &buff[1], ps->ip_to, 16);
-
-    // port
-    // для извлечения порта, выделяется фрагмент
-    // памяти с 16 битами или 0xFFFF
-
-    ps->port_f = (buff[2] & 0xFFFF0000) >> 16;
-    ps->port_t = buff[2] & 0xFFFF;
-
-    // протокол, размер (полный и udp)
-    // код протокола состоит из 1 байта = 8 бит = 0xFF
-    ps->protocol = (buff[3] & 0xFF0000) >> 16;
-    ps->udp_len = buff[3] & 0xFFFF;
-    ps->total_len = buff[4];
-}
+// размер сообщения = int + short
+#define MSG_SIZE 6
 
 int main()
 {
@@ -67,22 +28,15 @@ int main()
 
     // полчучение числа пакетов
     mq_receive(mq_id, buff, MSG_SIZE, NULL);
-    unsigned short i, packets_count = atoi(buff);
-    struct packet_stat ps;
-
-    for (i = 0; i < packets_count; i++) {
-        mq_receive(mq_id, buff, MSG_SIZE, NULL);
-        deshif((unsigned int *)buff, &ps);
-        print_stat(&ps);
-    }
+    unsigned short packets_count = atoi(buff);
     mq_receive(mq_id, buff, MSG_SIZE, NULL);
-    unsigned int total_size = atoi(buff);
+    unsigned int total_bytes = atoi(buff);
 
     puts("==========================");
     printf("Packets catch: %i\n", packets_count);
-    printf("Total size: %i\n", total_size);
+    printf("Total size: %i\n", total_bytes);
 
     mq_close(mq_id);
 
-    return 0;
+    exit(EXIT_SUCCESS);
 }
